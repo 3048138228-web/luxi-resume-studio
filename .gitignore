@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+*.log
+
+# 本机运行数据与个人材料
+data/resume-library.json
+data/*个人简历库*.json
+data/jobs-import-report.json
+outputs/
+
+# 个人化生成脚本
+scripts/render-english-resume.js
+

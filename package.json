@@ -1,0 +1,23 @@
+{
+  "name": "jd-resume-fill-assistant",
+  "version": "0.1.0",
+  "private": true,
+  "description": "纯本地个人简历库、STAR 经历管理与岗位定制简历生成器",
+  "homepage": "https://github.com/3048138228-web/luxi-resume-studio#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/3048138228-web/luxi-resume-studio.git"
+  },
+  "scripts": {
+    "start": "node scripts/server.js",
+    "import:jobs": "node scripts/import-jobs.js",
+    "test": "node tests/analyzer.test.js && node tests/library.test.js && node tests/jobs.test.js"
+  },
+  "dependencies": {
+    "mammoth": "^1.12.0",
+    "pdfjs-dist": "^6.1.200"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}

@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="从秋招岗位识别、个人经历匹配到 STAR 定制简历的一站式校招工作台。" />
+    <title>履析｜秋招岗位与定制简历</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232f4f45'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-size='36' fill='white'%3E%E5%B1%A5%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="src/styles.css?v=12" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">履</span>
+          <div>
+            <span class="eyebrow">PERSONAL RESUME STUDIO</span>
+            <strong>履析</strong>
+          </div>
+        </div>
+        <div class="privacy-pill workflow-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          岗位识别 · 简历匹配 · 定制生成
+        </div>
+      </header>
+
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="kicker">从发现岗位，到拿出真正匹配的简历</p>
+          <h1 id="heroTitle">先看清岗位，<br /><span>再定制你的答案。</span></h1>
+          <p class="hero-description">集中浏览秋招岗位，调用个人简历库中的真实经历，再根据岗位要求用 STAR 重新编排成完整简历。</p>
+          <div class="flow-list" aria-label="处理步骤">
+            <span><b>01</b> 识别岗位</span>
+            <i aria-hidden="true">→</i>
+            <span><b>02</b> 搭配简历库</span>
+            <i aria-hidden="true">→</i>
+            <span><b>03</b> 定制岗位简历</span>
+          </div>
+        </div>
+      </section>
+
+      <nav class="mode-switch" aria-label="工作模式">
+        <button type="button" class="mode-button active" data-mode="jobs" aria-pressed="true">
+          <span class="mode-index">01</span>
+          <span><b>岗位信息</b><small>浏览秋招 · 选择目标岗位</small></span>
+          <em id="jobsNavCount">等待同步</em>
+        </button>
+        <button type="button" class="mode-button" data-mode="library" aria-pressed="false">
+          <span class="mode-index">02</span>
+          <span><b>个人简历库</b><small>收集经历 · 补齐 STAR</small></span>
+          <em id="libraryNavCount">0 段经历</em>
+        </button>
+        <button type="button" class="mode-button" data-mode="application" aria-pressed="false">
+          <span class="mode-index">03</span>
+          <span><b>定制岗位</b><small>匹配经历 · 生成完整简历</small></span>
+          <em>STAR 编排</em>
+        </button>
+      </nav>
+
+      <section id="jobsWorkspace" class="jobs-workspace" aria-label="秋招岗位信息">
+        <section class="jobs-catalog" aria-labelledby="jobsTitle">
+          <header class="pane-header jobs-header">
+            <div class="pane-title">
+              <span class="section-number">01</span>
+              <div><span class="eyebrow">CAMPUS JOBS</span><h2 id="jobsTitle">秋招岗位库</h2><p id="jobSyncedAt">等待飞书数据同步</p></div>
+            </div>
+            <div class="toolbar job-source-actions">
+              <input id="jobFileInput" class="visually-hidden" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" />
+              <label class="secondary job-import-label" for="jobFileInput">导入飞书 CSV</label>
+              <button id="clearJobDataBtn" type="button" class="ghost danger-text" hidden>清除导入数据</button>
+              <a id="jobSourceLink" class="secondary source-link" href="#" target="_blank" rel="noreferrer">查看飞书源表 ↗</a>
+            </div>
+          </header>
+          <p id="jobImportStatus" class="job-import-status" role="status" aria-live="polite"></p>
+          <div class="job-stats" aria-label="岗位库统计">
+            <article><strong id="jobTotalCount">0</strong><span>岗位记录</span></article>
+            <article><strong id="jobCompanyCount">0</strong><span>招聘企业</span></article>
+            <article><strong id="jobLocationCount">0</strong><span>工作地点</span></article>
+          </div>
+          <div class="job-filters">
+            <label class="job-search"><span class="visually-hidden">搜索岗位</span><input id="jobSearchInput" type="search" placeholder="搜索公司、岗位、要求或关键词……" /></label>
+            <select id="jobCategoryFilter" aria-label="筛选职类"><option value="">全部职类</option></select>
+            <select id="jobLocationFilter" aria-label="筛选地点"><option value="">全部地点</option></select>
+            <select id="jobCohortFilter" aria-label="筛选届别"><option value="">全部届别</option></select>
+          </div>
+          <div class="jobs-list-heading"><span>岗位列表</span><strong id="jobResultCount">0 个岗位</strong></div>
+          <div id="jobList" class="job-list"></div>
+          <nav id="jobPagination" class="job-pagination" aria-label="岗位列表分页" hidden>
+            <button id="jobPrevPageBtn" type="button" class="ghost">← 上一页</button>
+            <span id="jobPageText">第 1 / 1 页</span>
+            <button id="jobNextPageBtn" type="button" class="ghost">下一页 →</button>
+          </nav>
+        </section>
+        <aside class="job-detail-panel" aria-label="岗位详情">
+          <div id="jobDetail" class="job-detail"><div class="job-detail-empty"><span>01</span><h3>先选择一个岗位</h3><p>岗位详情、要求和投递入口会显示在这里。</p></div></div>
+          <div class="job-detail-action">
+            <p>选择后进入个人简历库，检查可调用的经历，再生成定制版本。</p>
+            <button id="chooseJobBtn" type="button" class="primary" disabled><span>选择岗位并搭配简历库</span><span aria-hidden="true">→</span></button>
+          </div>
+        </aside>
+      </section>
+
+      <section id="libraryWorkspace" class="library-workspace" aria-label="个人简历库" hidden>
+        <section class="library-editor" aria-labelledby="libraryInputTitle">
+          <header class="pane-header">
+            <div class="pane-title">
+              <span class="section-number">02</span>
+              <div>
+                <span class="eyebrow">COLLECT</span>
+                <h2 id="libraryInputTitle">建立你的经历底稿</h2>
+                <p>明确事实与 STAR 经历分开保存，后续可以持续补充。</p>
+              </div>
+            </div>
+            <button id="loadLibrarySampleBtn" type="button" class="secondary">查看示例</button>
+          </header>
+
+          <div id="librarySelectedJobBanner" class="workflow-context-card" hidden>
+            <span class="workflow-context-icon" aria-hidden="true">01</span>
+            <div><strong id="librarySelectedJobTitle">已选择目标岗位</strong><p id="librarySelectedJobMeta">检查简历库后继续生成定制版本。</p></div>
+          </div>
+
+          <div class="memory-progress" aria-label="资料完整度">
+            <div>
+              <span>资料完整度</span>
+              <strong id="completenessText">0%</strong>
+            </div>
+            <div class="progress-track"><span id="completenessBar"></span></div>
+            <p id="completenessHint">先填写基础信息，再沉淀至少一段经历。</p>
+          </div>
+
+          <form id="profileForm" class="form-section">
+            <header class="form-section-header">
+              <div><span>STEP 1</span><h3>基础档案</h3></div>
+              <p>只填写能够确认的事实</p>
+            </header>
+            <div class="field-grid compact">
+              <label><span class="field-label">姓名</span><input data-profile-field="name" type="text" autocomplete="name" placeholder="证件姓名" /></label>
+              <label><span class="field-label">职业定位</span><input data-profile-field="headline" type="text" placeholder="例如：增长运营 / 数据分析" /></label>
+              <label><span class="field-label">手机号</span><input data-profile-field="phone" type="tel" autocomplete="tel" placeholder="真实联系电话" /></label>
+              <label><span class="field-label">邮箱</span><input data-profile-field="email" type="email" autocomplete="email" placeholder="常用邮箱" /></label>
+              <label><span class="field-label">所在城市</span><input data-profile-field="city" type="text" placeholder="例如：上海" /></label>
+              <label><span class="field-label">最高学历</span><input data-profile-field="education" type="text" placeholder="本科 / 硕士 / 博士" /></label>
+              <label><span class="field-label">院校</span><input data-profile-field="school" type="text" placeholder="最高学历毕业院校" /></label>
+              <label><span class="field-label">专业</span><input data-profile-field="major" type="text" placeholder="主修专业" /></label>
+              <label><span class="field-label">毕业时间</span><input data-profile-field="graduation" type="text" placeholder="例如：2027.06" /></label>
+              <label><span class="field-label">语言能力</span><input data-profile-field="languages" type="text" placeholder="例如：英语 CET-6" /></label>
+            </div>
+            <label class="stacked"><span class="field-label">技能标签 <small>用顿号分隔</small></span><textarea data-profile-field="skills" class="compact-textarea" placeholder="Excel、SQL、Python、公众号运营……"></textarea></label>
+            <label class="stacked"><span class="field-label">证书与资质</span><input data-profile-field="certificates" type="text" placeholder="没有可留空，不自动补充" /></label>
+            <div class="form-actions"><button type="submit" class="primary"><span>保存基础档案</span><span aria-hidden="true">→</span></button><span id="profileStatus" role="status" aria-live="polite"></span></div>
+          </form>
+
+          <section class="form-section upload-section" aria-labelledby="uploadTitle">
+            <header class="form-section-header">
+              <div><span>STEP 2 · 可选</span><h3 id="uploadTitle">导入现成简历</h3></div>
+              <p>自动提取后先预览，再写入简历库</p>
+            </header>
+            <input id="resumeFileInput" class="visually-hidden" type="file" accept=".pdf,.docx,.txt,.md,.json" />
+            <label class="upload-dropzone" for="resumeFileInput">
+              <span class="upload-icon" aria-hidden="true">↑</span>
+              <strong>选择 PDF、DOCX、TXT 或 Markdown</strong>
+              <small>也支持导入此前导出的简历库 JSON 备份</small>
+            </label>
+            <p id="uploadStatus" class="inline-status" role="status" aria-live="polite"></p>
+            <div id="importPreview" class="import-preview" hidden>
+              <header><div><span class="eyebrow">IMPORT PREVIEW</span><h4 id="importPreviewTitle">识别结果</h4></div><span id="importStats"></span></header>
+              <div id="importPreviewBody"></div>
+              <div class="form-actions">
+                <button id="confirmImportBtn" type="button" class="primary"><span>确认写入简历库</span><span aria-hidden="true">→</span></button>
+                <button id="cancelImportBtn" type="button" class="ghost">取消</button>
+              </div>
+            </div>
+          </section>
+
+          <form id="experienceForm" class="form-section">
+            <input id="experienceId" type="hidden" />
+            <header class="form-section-header">
+              <div><span>STEP 3</span><h3>添加一段经历</h3></div>
+              <p>按 STAR 填写，不确定的地方可以稍后补</p>
+            </header>
+            <div class="field-grid compact">
+              <label><span class="field-label">经历类型</span><select id="experienceType"><option value="internship">实习经历</option><option value="work">工作经历</option><option value="project">项目经历</option><option value="research">科研经历</option><option value="campus">校园经历</option><option value="volunteer">志愿服务</option><option value="other">其他经历</option></select></label>
+              <label><span class="field-label">经历名称</span><input id="experienceTitle" type="text" placeholder="例如：用户运营实习" /></label>
+              <label><span class="field-label">组织 / 公司</span><input id="experienceOrganization" type="text" placeholder="例如：星河科技" /></label>
+              <div class="date-fields"><label><span class="field-label">开始时间</span><input id="experienceStart" type="text" placeholder="2025.06" /></label><label><span class="field-label">结束时间</span><input id="experienceEnd" type="text" placeholder="2025.09 / 至今" /></label></div>
+            </div>
+            <div class="star-editor">
+              <label class="star-field"><span><b>S</b><em>情境 Situation</em></span><textarea id="experienceSituation" placeholder="当时是什么背景、业务问题或限制？"></textarea></label>
+              <label class="star-field"><span><b>T</b><em>任务 Task</em></span><textarea id="experienceTask" placeholder="你需要完成什么目标？承担什么职责？"></textarea></label>
+              <label class="star-field"><span><b>A</b><em>行动 Action</em></span><textarea id="experienceAction" placeholder="你具体做了什么？用了哪些方法和工具？"></textarea></label>
+              <label class="star-field"><span><b>R</b><em>结果 Result</em></span><textarea id="experienceResult" placeholder="产生了什么结果？有数据就写，没有先留空。"></textarea></label>
+            </div>
+            <label class="stacked"><span class="field-label">这段经历用到的技能</span><input id="experienceSkills" type="text" placeholder="例如：Excel、数据复盘、跨部门协作" /></label>
+            <div class="form-actions">
+              <button type="submit" class="primary"><span id="experienceSubmitText">保存这段经历</span><span aria-hidden="true">→</span></button>
+              <button id="cancelExperienceEditBtn" type="button" class="ghost" hidden>取消编辑</button>
+              <span id="experienceStatus" role="status" aria-live="polite"></span>
+            </div>
+          </form>
+        </section>
+
+        <aside class="memory-view" aria-labelledby="memoryTitle">
+          <header class="pane-header memory-header">
+            <div class="pane-title">
+              <span class="section-number">02</span>
+              <div><span class="eyebrow">RESUME LIBRARY</span><h2 id="memoryTitle">我的简历库</h2><p id="memoryUpdatedText">尚未保存资料</p></div>
+            </div>
+            <div class="toolbar"><button id="continueToCustomizeBtn" type="button" class="primary compact-primary"><span>继续定制</span><span aria-hidden="true">→</span></button><button id="exportLibraryBtn" type="button" class="secondary">导出备份</button><button id="clearLibraryBtn" type="button" class="ghost danger-text">清空</button></div>
+          </header>
+          <div class="memory-stats">
+            <article><strong id="experienceCount">0</strong><span>段经历</span></article>
+            <article><strong id="sourceCount">0</strong><span>份原始材料</span></article>
+            <article><strong id="starCount">0/0</strong><span>STAR 完整项</span></article>
+          </div>
+          <section class="portrait-card">
+            <span class="eyebrow">PERSONA SNAPSHOT</span>
+            <h3 id="portraitTitle">个人定位待补充</h3>
+            <p id="portraitSummary">经历库还是空的。可以先添加一段经历，或导入现有简历。</p>
+            <div id="portraitTags" class="tag-list"></div>
+          </section>
+          <section class="memory-section">
+            <header><div><span class="eyebrow">EXPERIENCE BANK</span><h3>经历资产</h3></div><span id="experienceListCount">0 段</span></header>
+            <div id="experienceList" class="experience-list"><div class="mini-empty">还没有经历。左侧保存后会出现在这里。</div></div>
+          </section>
+          <section class="memory-section">
+            <header><div><span class="eyebrow">SOURCE ARCHIVE</span><h3>原始材料</h3></div><span id="sourceListCount">0 份</span></header>
+            <div id="sourceList" class="source-list"><div class="mini-empty">导入的简历会保留文件名和原始文本。</div></div>
+          </section>
+        </aside>
+      </section>
+
+      <section id="applicationWorkspace" class="workspace" aria-label="岗位定制工作台" hidden>
+        <section class="input-pane" aria-labelledby="inputTitle">
+          <header class="pane-header">
+            <div class="pane-title">
+              <span class="section-number">03</span>
+              <div><span class="eyebrow">CUSTOMIZE</span><h2 id="inputTitle">确认目标岗位</h2><p id="libraryContextText">将从个人简历库中调用材料。</p></div>
+            </div>
+            <div class="toolbar"><button id="sampleBtn" type="button" class="secondary">填入示例 JD</button><button id="clearBtn" type="button" class="ghost">清空</button></div>
+          </header>
+          <div id="selectedJobSummary" class="selected-job-summary" hidden></div>
+          <div class="field-grid compact">
+            <label><span class="field-label">公司 <small>可选</small></span><input id="companyInput" type="text" autocomplete="off" placeholder="例如：某科技公司" /></label>
+            <label><span class="field-label">岗位 <small>建议填写</small></span><input id="roleInput" type="text" autocomplete="off" placeholder="例如：用户运营实习生" /></label>
+          </div>
+          <label class="stacked"><span class="label-row"><span class="field-label">JD 信息 <small>职责、要求、加分项</small></span><span class="char-count" id="jdCount">0 字</span></span><textarea id="jdInput" spellcheck="false" placeholder="粘贴岗位名称、岗位职责、任职要求和加分项……"></textarea></label>
+          <div class="library-source-card"><span class="library-source-icon" aria-hidden="true">02</span><div><strong>个人简历库已连接</strong><p id="librarySourceSummary">当前有 0 段经历，将按 JD 自动排序调用。</p></div><button id="goToLibraryBtn" type="button" class="ghost">返回补充</button></div>
+          <label class="stacked resume-field"><span class="label-row"><span class="field-label">临时补充材料 <small>仅用于本次定制</small></span><span class="char-count" id="resumeCount">0 字</span></span><textarea id="resumeInput" spellcheck="false" placeholder="如本次投递有临时补充内容，可粘贴在这里……"></textarea></label>
+          <label class="stacked"><span class="label-row"><span class="field-label">招聘表单字段 <small>每行一个，可选</small></span><span class="char-count" id="formCount">0 字</span></span><textarea id="formInput" spellcheck="false" placeholder="例如：自我评价&#10;相关实习经历&#10;求职动机"></textarea></label>
+          <div class="actions"><button id="analyzeBtn" type="button" class="primary"><span>生成岗位定制简历</span><span aria-hidden="true">→</span></button><span class="shortcut">⌘ / Ctrl + Enter</span><span id="statusText" role="status" aria-live="polite"></span></div>
+        </section>
+
+        <section class="output-pane" aria-labelledby="outputTitle">
+          <header class="pane-header output-header">
+            <div class="pane-title"><span class="section-number">R</span><div><span class="eyebrow">RESULT</span><h2 id="outputTitle">岗位定制结果</h2><p id="summaryText">等待输入目标岗位。</p></div></div>
+            <button id="copyBtn" type="button" class="secondary copy-report" disabled>复制全文</button>
+          </header>
+          <div id="resultMeta" class="result-meta" hidden aria-label="结果摘要"></div>
+          <nav class="tabs" role="tablist" aria-label="结果分区">
+            <button type="button" class="tab active" role="tab" aria-selected="true" data-tab="fullResume">完整简历</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="profile">岗位画像</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="match">匹配分析</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="resume">定制建议</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="fields">表单填写</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="risks">风险提示</button>
+            <button type="button" class="tab" role="tab" aria-selected="false" data-tab="markdown">全文</button>
+          </nav>
+          <div id="resultPanel" class="result-panel empty" role="tabpanel" aria-live="polite">
+            <div class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h3>等待目标岗位</h3><p>系统会从个人简历库中寻找最相关证据，并按 STAR 生成完整简历。</p><ol><li><span>1</span> 分析岗位要求</li><li><span>2</span> 调取相关经历</li><li><span>3</span> 编排完整简历</li></ol></div>
+          </div>
+        </section>
+      </section>
+
+      <footer class="site-footer"><span>岗位信息 → 个人简历库 → 定制岗位</span><span>生成后请核对事实，并补齐标记为“待确认”的内容</span></footer>
+    </main>
+
+    <div id="copyFallback" class="copy-fallback" role="dialog" aria-modal="true" aria-labelledby="copyFallbackTitle" hidden>
+      <div class="copy-fallback-card"><header><div><span class="eyebrow">MANUAL COPY</span><h2 id="copyFallbackTitle">手动复制</h2></div><button id="closeCopyFallback" type="button" class="ghost" aria-label="关闭手动复制">关闭</button></header><p>浏览器限制了自动复制。内容已经选中，请按 <strong>⌘ / Ctrl + C</strong> 完成复制。</p><textarea id="copyFallbackText" readonly aria-label="待复制内容"></textarea></div>
+    </div>
+
+    <script src="vendor/pdf.worker.min.js"></script>
+    <script src="vendor/pdf.min.js"></script>
+    <script src="vendor/mammoth.browser.min.js"></script>
+    <script src="data/jobs.js?v=12"></script>
+    <script src="src/jobs-core.js?v=12"></script>
+    <script src="src/assistant-core.js?v=12"></script>
+    <script src="src/library-core.js?v=12"></script>
+    <script src="src/library-app.js?v=12"></script>
+    <script src="src/jobs-app.js?v=12"></script>
+    <script src="src/app.js?v=12"></script>
+  </body>
+</html>
